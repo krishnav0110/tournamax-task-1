@@ -1,0 +1,21 @@
+.con {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.desc {
+  font-size: 1rem;
+}
+
+.delete {
+  padding: 10px;
+}
