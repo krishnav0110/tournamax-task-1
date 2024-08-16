@@ -1,5 +1,5 @@
 'use server';
-import TasksDB, { TaskModel } from "@/lib/dataTypes";
+import TasksDB from "@/lib/dataTypes";
 import { revalidatePath } from "next/cache";
 import { connectToMongoDB } from "@/lib/db";
 import { ObjectId } from "mongoose";
@@ -14,10 +14,9 @@ export const fetchTasks = async () => {
     try {
         const tasks = await TasksDB.find();
         revalidatePath("/");
-        return tasks;
+        return { status: 200, data: JSON.stringify(tasks) };
     } catch (error) {
-        console.log(error);
-        return { message: 'couldn\'t fetch tasks' };
+        return { status: 500, data: "", message: 'couldn\'t fetch tasks' };
     }
 };
 
@@ -33,10 +32,9 @@ export const createTask = async (formData: FormData) => {
         });
         newTask.save();
         revalidatePath("/");
-        return newTask.toString();
+        return { status: 200, data: JSON.stringify(newTask) };
     } catch (error) {
-        console.log(error);
-        return { message: 'error creating task' };
+        return { status: 500, data: "", message: 'error creating task' };
     }
 };
 
@@ -48,11 +46,11 @@ export const updateTask = async (formdata: FormData) => {
     const taskDesc = formdata.get("desc");
 
     try {
-        await TasksDB.findByIdAndUpdate(taskId, { $set: {title: taskTitle, desc: taskDesc }});
+        const updatedTask = await TasksDB.findByIdAndUpdate(taskId, { $set: {title: taskTitle, desc: taskDesc }});
         revalidatePath("/");
-        return ('task updated');
+        return { status: 200, data: JSON.stringify(updatedTask) };
     } catch (error) {
-        return {message: 'error deleting task'};
+        return { status: 500, data: "", message: 'error updating task' };
     }
 }
 
@@ -63,8 +61,8 @@ export const deleteTask = async (taskId: ObjectId) => {
     try {
         await TasksDB.deleteOne({_id: taskId});
         revalidatePath("/");
-        return ('task deleted');
+        return { status: 200, message: 'task deleted'};
     } catch (error) {
-        return {message: 'error deleting task'};
+        return { status: 500, message: 'error deleting task' };
     }
 }

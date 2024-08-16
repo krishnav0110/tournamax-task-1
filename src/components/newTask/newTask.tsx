@@ -1,15 +1,31 @@
 "use client";
-
 import styles from "./newTask.module.css";
 
 import { useRef } from "react";
 
+import { TaskModel } from "@/lib/dataTypes";
 import { createTask } from "@/api";
 
 
 
-export default function NewTask() {
+export default function NewTask(props: { tasks: TaskModel[], setTasks: Function }) {
   const ref = useRef<HTMLFormElement>(null);
+
+
+
+  const taskCreation = async (formData: FormData) => {
+    const res = await createTask(formData);
+    if(res.status === 200) {
+      ref.current?.reset();
+      const newTask: TaskModel = JSON.parse(res.data);
+      props.setTasks([...props.tasks, newTask]);
+    }
+    else {
+      console.log(res.message);
+    }
+  };
+
+
 
 
 
@@ -17,11 +33,7 @@ export default function NewTask() {
     <div className={styles.con}>
       <form
         ref={ref}
-        action={async (FormData) => {
-          ref.current?.reset();
-          await createTask(FormData);
-          window.location.reload();
-        }}
+        action={taskCreation}
         className={styles.form}
       >
 

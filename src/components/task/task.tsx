@@ -6,10 +6,19 @@ import { deleteTask } from "@/api";
 
 
 export default function Task(props: TaskModel) {
+
   const handleDelete = async () => {
-    await deleteTask(props._id);
-    window.location.reload();
+    const res = await deleteTask(props._id);
+    if(res.status === 200) {
+      window.location.reload();
+    } else {
+      console.log(res.message);
+    }
   };
+
+
+
+  
 
   return (
     <div className={styles.con}>

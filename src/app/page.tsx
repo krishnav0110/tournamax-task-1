@@ -22,13 +22,20 @@ export default function Home() {
   useEffect(() => {
     const loadTasks = async () => {
       const res = await fetchTasks();
-      setTasks(res as TaskModel[]);
+      if(res.status === 200) {
+        const tasks: TaskModel[] = JSON.parse(res.data);
+        setTasks(tasks);
+      } else {
+        console.log(res.message);
+      }
     };
     loadTasks();
   }, []);
 
 
 
+
+  
   return (
     <div className={styles.con}>
       <div className={styles.main}>
@@ -37,7 +44,7 @@ export default function Home() {
         <button className={styles.addButton} onClick={() => setShowNewTask(!showNewTask)}>
           {showNewTask ? "Cancel" : "Add"}
         </button>
-        {showNewTask && <NewTask />}
+        {showNewTask && <NewTask tasks={tasks} setTasks={setTasks} />}
 
         <div className={styles.tasks}>
           {tasks.map((task, index) => (
